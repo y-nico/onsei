@@ -1,10 +1,15 @@
 import streamlit as st
 from gtts import gTTS
 import os
+import hashlib
 
 # キャッシュディレクトリを作成
 if not os.path.exists("cache"):
     os.makedirs("cache")
+
+# テキストをハッシュ化する関数
+def hash_text(text):
+    return hashlib.md5(text.encode()).hexdigest()
 
 # Streamlit アプリの構成
 st.title('テキスト読み上げアプリ')
@@ -15,7 +20,8 @@ text_input = st.text_area("テキストを入力してください:")
 # 再生ボタン
 if st.button('再生'):
     if text_input:
-        tts_file = f"cache/{hash(text_input)}.mp3"
+        # テキストをハッシュ化してファイル名に使用
+        tts_file = f"cache/{hash_text(text_input)}.mp3"
         if not os.path.exists(tts_file):
             try:
                 tts = gTTS(text=text_input, lang='ja', slow=False)
@@ -32,6 +38,7 @@ if st.button('再生'):
 # 停止ボタン
 if st.button('停止'):
     st.warning("停止機能はサポートされていません。")
+
 
 
 
